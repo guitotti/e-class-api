@@ -1,6 +1,6 @@
 import { openDb } from "../db_config.js";
 
-export async function createTable() {
+export async function createTeacherTable() {
   openDb().then((db) => {
     db.exec(
       "CREATE TABLE IF NOT EXISTS Teacher ( id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT )"
