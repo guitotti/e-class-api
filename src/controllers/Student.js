@@ -36,6 +36,12 @@ export async function updateStudent(req, res) {
   });
 }
 
+export async function selectAllStudents(req, res) {
+  openDb().then((db) => {
+    db.all("SELECT * FROM students").then((students) => res.json(students));
+  });
+}
+
 export async function selectStudent(req, res) {
   const id = req.params.id;
   openDb().then(async (db) => {
