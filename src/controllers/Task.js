@@ -39,13 +39,22 @@ export async function selectTasksByStudentAndTeacherAndStatus(req, res) {
   const studentId = req.body.studentId;
   const teacherId = req.body.teacherId;
   const status = req.body.status; // pendente, completa, corrigida
-  
+
   openDb().then((db) => {
-    db.all(`
+    db.all(
+      `
       SELECT * FROM tasks
       WHERE studentId = ? AND teacherId = ? AND status = ?
-    `, [studentId, teacherId, status]).then((tasks) =>
-      res.json(tasks)
-    );
+    `,
+      [studentId, teacherId, status]
+    ).then((tasks) => res.json(tasks));
   });
+}
+
+export async function deleteTask(req, res) {
+  const id = req.params.id;
+  openDb().then((db) => {
+    db.run("DELETE FROM tasks WHERE id = ?", [id]).then((res) => res);
+  });
+  res.json({ message: "Task deleted successfully!" });
 }
