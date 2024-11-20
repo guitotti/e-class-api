@@ -3,7 +3,7 @@ import { openDb } from "../db_config.js";
 export async function createTeacherTable() {
   openDb().then((db) => {
     db.exec(
-      "CREATE TABLE IF NOT EXISTS teachers ( id INTEGER PRIMARY KEY, name TEXT, email TEXT, password TEXT )"
+      "CREATE TABLE IF NOT EXISTS teachers ( id INTEGER PRIMARY KEY, name TEXT NOT NULL, email TEXT NOT NULL, password TEXT NOT NULL )"
     );
   });
 }

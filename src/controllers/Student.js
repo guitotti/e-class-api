@@ -3,7 +3,7 @@ import { openDb } from "../db_config.js";
 export async function createStudentTable() {
   openDb().then((db) => {
     db.exec(
-      "CREATE TABLE IF NOT EXISTS students ( id INTEGER PRIMARY KEY, name TEXT, userId TEXT, password TEXT )"
+      "CREATE TABLE IF NOT EXISTS students ( id INTEGER PRIMARY KEY, name TEXT NOT NULL, userId TEXT NOT NULL, email TEXT NULL, password TEXT NOT NULL, description TEXT NOT NULL, weekday TEXT NOT NULL, time TIME NOT NULL)"
     );
   });
 }
@@ -11,11 +11,18 @@ export async function createStudentTable() {
 export async function insertStudent(req, res) {
   const student = req.body;
   openDb().then((db) => {
-    db.run("INSERT INTO students (name, UserId, password) VALUES (?,?,?)", [
-      student.name,
-      student.userId,
-      student.password,
-    ]);
+    db.run(
+      "INSERT INTO students (name, userId, email, password, description, weekday, time) VALUES (?,?,?,?,?,?,?)",
+      [
+        student.name,
+        student.userId,
+        student.email,
+        student.password,
+        student.description,
+        student.weekday,
+        student.time,
+      ]
+    );
   });
   res.json({
     statusCode: 200,
@@ -25,11 +32,18 @@ export async function insertStudent(req, res) {
 export async function updateStudent(req, res) {
   const student = req.body;
   openDb().then((db) => {
-    db.run("UPDATE students SET name=?, userId=?, password=? WHERE id=?", [
-      student.name,
-      student.userId,
-      student.password,
-    ]);
+    db.run(
+      "UPDATE students SET name=?, userId=?, email=?, password=?, description=?, weekday=?, time=? WHERE id=?",
+      [
+        student.name,
+        student.userId,
+        student.email,
+        student.password,
+        student.description,
+        student.weekday,
+        student.time,
+      ]
+    );
   });
   res.json({
     statusCode: 200,
