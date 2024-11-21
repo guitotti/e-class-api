@@ -1,27 +1,46 @@
 import { openDb } from "../db_config.js";
+import { v4 as uuidv4 } from "uuid";
 
 export async function createTaskTable() {
-  openDb().then((db) => {
-    db.exec(
-      "CREATE TABLE IF NOT EXISTS tasks ( id INTEGER PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL, status TEXT NOT NULL, dueDate TEXT NOT NULL, teacherId INTEGER NOT NULL, studentId INTEGER NOT NULL, FOREIGN KEY (teacherId) REFERENCES teachers(id), FOREIGN KEY (studentId) REFERENCES students(id) )"
-    );
-  });
+  try {
+    await openDb().then((db) => {
+      db.exec(
+        "CREATE TABLE IF NOT EXISTS tasks ( id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT NOT NULL, status TEXT NOT NULL, dueDate TEXT NOT NULL, filePath TEXT NULL, teacherId INTEGER NOT NULL, studentId INTEGER NOT NULL, FOREIGN KEY (teacherId) REFERENCES teachers(id), FOREIGN KEY (studentId) REFERENCES students(id) )"
+      );
+    });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function insertTask(req, res) {
-  const task = req.body;
-  openDb().then((db) => {
-    db.run(
-      "INSERT INTO tasks (title, description, status, dueDate, teacherId, studentId) VALUES (?,?,?,?,?,?)",
-      [
-        task.title,
-        task.description,
-        task.status,
-        task.dueDate,
-        task.teacherId,
-        task.studentId,
-      ]
-    );
+  const task = JSON.parse(req.body.data);
+  const taskId = uuidv4();
+  const file = req.file;
+  let fileName;
+
+  if (!file) {
+    fileName = null;
+  } else {
+    fileName = file.filename;
+  }
+
+  const query = `
+    INSERT INTO tasks (id, title, description, status, dueDate, filePath, teacherId, studentId)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  await openDb().then((db) => {
+    db.run(query, [
+      taskId,
+      task.title,
+      task.description,
+      task.status,
+      task.dueDate,
+      fileName,
+      task.teacherId,
+      task.studentId,
+    ]);
   });
   res.json({ message: "Task created successfully!" });
 }
