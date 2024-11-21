@@ -30,7 +30,7 @@ export async function insertTask(req, res) {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
   `;
 
-  await openDb().then((db) => {
+  openDb().then((db) => {
     db.run(query, [
       taskId,
       task.title,
