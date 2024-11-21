@@ -1,4 +1,8 @@
 import Router from "express";
+import multer from "multer";
+import { storage } from "./multerConfig.js";
+
+const upload = multer({ storage });
 
 import {
   createTeacherTable,
@@ -21,8 +25,8 @@ import {
 import {
   createTaskTable,
   insertTask,
-  updateTask,
-  selectAllTasks,
+  // updateTask,
+  // selectAllTasks,
   selectTask,
   deleteTask,
 } from "./controllers/Task.js";
@@ -51,10 +55,10 @@ router.post("/student", authenticateJWT, insertStudent);
 router.put("/student", authenticateJWT, updateStudent);
 router.delete("/student/:id", authenticateJWT, deleteStudent);
 
-router.get("/tasks", selectAllTasks);
+// router.get("/tasks", selectAllTasks);
 router.get("/task/:id", selectTask);
-router.post("/task", insertTask);
-router.put("/task", updateTask);
+router.post("/task", upload.single("file"), insertTask);
+// router.put("/task", updateTask);
 router.delete("/task/:id", deleteTask);
 
 router.post("/login", authenticateTeacher);
