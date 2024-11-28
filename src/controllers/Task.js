@@ -14,20 +14,14 @@ export async function createTaskTable() {
 }
 
 export async function insertTask(req, res) {
-  const task = JSON.parse(req.body.data);
+  console.log(req.body);
+  const task = req.body.data;
+  console.log(task)
   const taskId = uuidv4();
-  const file = req.file;
-  let fileName;
-
-  if (!file) {
-    fileName = null;
-  } else {
-    fileName = file.filename;
-  }
 
   const query = `
-    INSERT INTO tasks (id, title, description, status, dueDate, filePath, teacherId, studentId)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    INSERT INTO tasks (id, title, description, status, dueDate, teacherId, studentId)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
 
   openDb().then((db) => {
@@ -35,9 +29,9 @@ export async function insertTask(req, res) {
       taskId,
       task.title,
       task.description,
-      task.status,
+      "enviada",
       task.dueDate,
-      fileName,
+      // fileName,
       task.teacherId,
       task.studentId,
     ]);
@@ -54,10 +48,27 @@ export async function selectTask(req, res) {
   });
 }
 
+export async function selectTasksByStudentId(req, res) {
+  const studentId = req.body.studentId;
+  openDb().then((db) => {
+    db.all("SELECT * FROM tasks WHERE studentId = ?", [studentId]).then((tasks) =>
+      res.json(tasks)
+    );
+  });
+}
+
+export async function selectAllTasks(req, res) {
+  openDb().then((db) => {
+    db.all("SELECT * FROM tasks").then((tasks) =>
+      res.json(tasks)
+    );
+  });
+}
+
 export async function selectTasksByStudentAndTeacherAndStatus(req, res) {
   const studentId = req.body.studentId;
   const teacherId = req.body.teacherId;
-  const status = req.body.status; // pendente, completa, corrigida
+  const status = req.body.status;
 
   openDb().then((db) => {
     db.all(
