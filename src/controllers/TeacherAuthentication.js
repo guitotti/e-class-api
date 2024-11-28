@@ -17,7 +17,7 @@ export async function authenticateTeacher(req, res) {
 
     if (row) {
       const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: "1h" });
-      res.json({ token });
+      res.json({ token, teacher: row });
     } else {
       res.status(401).json({ message: "Invalid credentials!" });
     }

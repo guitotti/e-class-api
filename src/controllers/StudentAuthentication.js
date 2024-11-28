@@ -17,7 +17,7 @@ export async function authenticateStudent(req, res) {
 
     if (row) {
       const token = jwt.sign({ userId }, SECRET_KEY, { expiresIn: "1h" });
-      res.json({ token });
+      res.json({ token, studentId: row });
     } else {
       res.status(401).json({ message: "Invalid credentials!" });
     }
