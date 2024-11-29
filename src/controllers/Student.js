@@ -3,7 +3,7 @@ import { openDb } from "../db_config.js";
 export async function createStudentTable() {
   openDb().then((db) => {
     db.exec(
-      "CREATE TABLE IF NOT EXISTS students ( id INTEGER PRIMARY KEY, name TEXT NOT NULL, userId TEXT NOT NULL, email TEXT NULL, password TEXT NOT NULL, description TEXT NOT NULL, weekday TEXT NOT NULL, time TIME NOT NULL)"
+      "CREATE TABLE IF NOT EXISTS students ( id INTEGER PRIMARY KEY, name TEXT NOT NULL, userId TEXT NOT NULL, email TEXT NULL, password TEXT NOT NULL, description TEXT NOT NULL, weekday TEXT NOT NULL, time TIME NOT NULL, teacherId INTEGER NOT NULL, FOREIGN KEY (teacherId) REFERENCES teachers(id) )"
     );
   });
 }
@@ -12,7 +12,7 @@ export async function insertStudent(req, res) {
   const student = req.body;
   openDb().then((db) => {
     db.run(
-      "INSERT INTO students (name, userId, email, password, description, weekday, time) VALUES (?,?,?,?,?,?,?)",
+      "INSERT INTO students (name, userId, email, password, description, weekday, time, teacherId) VALUES (?,?,?,?,?,?,?,?)",
       [
         student.name,
         student.userId,
@@ -21,6 +21,7 @@ export async function insertStudent(req, res) {
         student.description,
         student.weekday,
         student.time,
+        student.teacherId,
       ]
     );
   });
@@ -51,8 +52,11 @@ export async function updateStudent(req, res) {
 }
 
 export async function selectAllStudents(req, res) {
+  const teacherId = req.query.teacherId;
   openDb().then((db) => {
-    db.all("SELECT * FROM students").then((students) => res.json(students));
+    db.all("SELECT * FROM students WHERE teacherId = ?", [teacherId]).then(
+      (students) => res.json(students)
+    );
   });
 }
 

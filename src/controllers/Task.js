@@ -49,7 +49,8 @@ export async function selectTask(req, res) {
 }
 
 export async function selectTasksByStudentId(req, res) {
-  const studentId = req.body.studentId;
+  const studentId = req.query.studentId;
+  console.log("studentId", studentId);
   openDb().then((db) => {
     db.all("SELECT * FROM tasks WHERE studentId = ?", [studentId]).then((tasks) =>
       res.json(tasks)

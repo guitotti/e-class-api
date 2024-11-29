@@ -26,13 +26,14 @@ import {
   createTaskTable,
   insertTask,
   // updateTask,
-  // selectAllTasks,
   selectTask,
   deleteTask,
+  selectTasksByStudentId,
+  selectAllTasks,
 } from "./controllers/Task.js";
 
 import { authenticateTeacher } from "./controllers/TeacherAuthentication.js";
-import { authenticateStudent } from "./controllers/studentAuthentication.js";
+import { authenticateStudent } from "./controllers/StudentAuthentication.js";
 import { authenticateJWT } from "./middleware/authenticateJWT.js";
 
 const router = Router();
@@ -47,17 +48,18 @@ router.get("/teachers", selectAllTeachers);
 router.get("/teacher/:id", selectTeacher);
 router.post("/teacher", insertTeacher);
 router.put("/teacher", updateTeacher);
-router.delete("/teacher/:id", authenticateJWT, deleteTeacher);
+router.delete("/teacher/:id", deleteTeacher);
 
-router.get("/students", authenticateJWT, selectAllStudents);
-router.get("/student/:id", authenticateJWT, selectStudent);
-router.post("/student", authenticateJWT, insertStudent);
-router.put("/student", authenticateJWT, updateStudent);
-router.delete("/student/:id", authenticateJWT, deleteStudent);
+router.get("/students", selectAllStudents);
+router.get("/student/:id", selectStudent);
+router.post("/student", insertStudent);
+router.put("/student", updateStudent);
+router.delete("/student/:id", deleteStudent);
 
+router.get("/tasks", selectTasksByStudentId);
 // router.get("/tasks", selectAllTasks);
 router.get("/task/:id", selectTask);
-router.post("/task", upload.single("file"), insertTask);
+router.post("/task", insertTask);
 // router.put("/task", updateTask);
 router.delete("/task/:id", deleteTask);
 
